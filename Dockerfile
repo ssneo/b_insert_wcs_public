@@ -21,6 +21,7 @@ RUN echo 'alias python="/usr/bin/python3.8"' >> /root/.bashrc
 
 
 RUN pip3 install psycopg2-binary
+RUN pip3 install astropy
 
 #we are going to make the dir DAP here then make that the workingDir. This need to occur now because not until after the DockerFile is build are the volumne connected
 RUN mkdir /dap
