@@ -231,7 +231,7 @@ def insertWCS( fileName, lowarcsec, higharcsec ):
     #submis = 'solve-field  --scale-units arcsecperpix --scale-low %s --scale-high %s --cpulimit 5 --no-plots  --skip-solved %s'%(lowarcsec, higharcsec, filename)
 
 
-    submis = 'solve-field --overwrite --skip-solved --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 30 --no-plots  --config /dap/sex/astrometryGaia.cfg %s'%(lowarcsec, higharcsec, ra, dec, fileName)
+    submis = 'solve-field --overwrite --skip-solved --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 30 --no-plots  --config /dap/b_insert_wcs/sex/astrometryGaia.cfg %s'%(lowarcsec, higharcsec, ra, dec, fileName)
 
     #submis = 'solve-field --overwrite --scale-units arcsecperpix --ra %s --dec %s --radius .25 --no-plots  --config /dap/sex/astrometryGaia.cfg %s'%( ra, dec, filename)
     
@@ -303,6 +303,9 @@ def insertWCS( fileName, lowarcsec, higharcsec ):
 
 if __name__ == "__main__":
 
+    testImage = '/dap_data/DECAM/2022_08_12/1120208/working/1120208_N1.fits'
+    runTestImage = True
+
     while(1):
         sleepTime = 1
         msg = client_queue()
@@ -325,7 +328,11 @@ if __name__ == "__main__":
             lowarcsec = 0.23
             higharcsec = 0.29
 
-            insertWCS( fileName, lowarcsec, higharcsec )
+            if runTestImage == True:
+                insertWCS( testImage, lowarcsec, higharcsec )
+                #stop
+            else:
+                insertWCS( fileName, lowarcsec, higharcsec )
             
             #updateDB( msg, msg ) #say the work has been done
             log('updateDB function complete')
