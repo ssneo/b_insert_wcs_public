@@ -303,7 +303,7 @@ def insertWCS( fileName, lowarcsec, higharcsec ):
 
 if __name__ == "__main__":
 
-    testImage = '/dap_data/DECAM/2022_08_12/1120208/working/1120208_N1.fits'
+    #testImage = '/dap_data/DECAM/2022_08_12/1120208/working/1120208_N1.fits'
     runTestImage = False
 
     while(1):
