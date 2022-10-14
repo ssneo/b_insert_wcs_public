@@ -238,17 +238,20 @@ def insertWCS( fileName, lowarcsec, higharcsec ):
 
     #submis = 'solve-field --overwrite --scale-units arcsecperpix --ra %s --dec %s --radius .25 --no-plots  --config /dap/sex/astrometryGaia.cfg %s'%( ra, dec, filename)
     
+    print ('submis1', submis1)
+    os.system(submis1)
     
-    try:
-        os.system(submis1) #this also skips solved fields
-        print (submis1)
-    except:
-        os.system(submis2)
-        print (submis2)
-    else:
-        print ('submis1', submis1)
-        print ('submis2', submis2)
-        print ('**Unable to have either command run')
+    
+    #try:
+    #    os.system(submis1) #this also skips solved fields
+    #    print (submis1)
+    #except:
+    #    os.system(submis2)
+    #    print (submis2)
+    #else:
+    #    print ('submis1', submis1)
+    #    print ('submis2', submis2)
+    #    print ('**Unable to have either command run')
 
 
 
