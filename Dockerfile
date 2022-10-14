@@ -49,7 +49,7 @@ COPY /src/keepRunning.py /dap/b_insert_wcs/src/keepRunning.py
 #COPY config /config
 
 #RUN chmod +x /bashFile.sh
-#RUN chmod +x /dap/b_insert_wcs/src/insertWCS.py
+RUN chmod +x /dap/b_insert_wcs/src/insertWCS.py
 RUN chmod +x /dap/b_insert_wcs/src/keepRunning.py
 
 #RUN ./baseFile.sh
@@ -58,8 +58,8 @@ RUN chmod +x /dap/b_insert_wcs/src/keepRunning.py
 #RUN ["chmod", "+x", "/bashFile.sh"]
 #ENTRYPOINT [ "/bashFile.sh"]
 #ENTRYPOINT ["/dap/a_start_up/src/start_up.py"]
-#CMD ["python3.8", "/dap/b_insert_wcs/src/insertWCS.py"]
-CMD ["python3.8", "/dap/b_insert_wcs/src/keepRunning.py"]
+CMD ["python3.8", "/dap/b_insert_wcs/src/insertWCS.py"]
+#CMD ["python3.8", "/dap/b_insert_wcs/src/keepRunning.py"]
 
 #RUN ["chmod", "+x", "/dap/a_start_up/src/start_up.py"] #change permission of file
 #ENTRYPOINT ["python", "/dap/a_start_up/src/start_up.py"]
