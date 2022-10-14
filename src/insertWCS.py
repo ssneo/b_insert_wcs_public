@@ -349,7 +349,7 @@ if __name__ == "__main__":
             else:
                 insertWCS( fileName, lowarcsec, higharcsec )
             
-            #updateDB( msg, msg ) #say the work has been done
+            updateDB( msg, msg ) #say the work has been done
             log('updateDB function complete')
             print ('updateDB is complete for ', msg )
 
