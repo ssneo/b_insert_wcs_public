@@ -231,12 +231,24 @@ def insertWCS( fileName, lowarcsec, higharcsec ):
     #submis = 'solve-field  --scale-units arcsecperpix --scale-low %s --scale-high %s --cpulimit 5 --no-plots  --skip-solved %s'%(lowarcsec, higharcsec, filename)
 
 
-    submis = 'solve-field --overwrite --skip-solved --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 30 --no-plots  --config /dap/b_insert_wcs/sex/astrometryGaia.cfg %s'%(lowarcsec, higharcsec, ra, dec, fileName)
+
+    submis1 = 'solve-field --overwrite --skip-solved --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 30 --no-plots  --config /mnt/raid/k8s_files/sex/astrometryGaia.cfg %s'%(lowarcsec, higharcsec, ra, dec, fileName)
+
+    submis2 = 'solve-field --overwrite --skip-solved --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 30 --no-plots  --config /dap/b_insert_wcs/sex/astrometryGaia.cfg %s'%(lowarcsec, higharcsec, ra, dec, fileName)
 
     #submis = 'solve-field --overwrite --scale-units arcsecperpix --ra %s --dec %s --radius .25 --no-plots  --config /dap/sex/astrometryGaia.cfg %s'%( ra, dec, filename)
     
-    print (submis)
-    os.system(submis) #this also skips solved fields
+    
+    try:
+        os.system(submis1) #this also skips solved fields
+        print (submis1)
+    except:
+        os.system(submis2)
+        print (submis2)
+    else:
+        print ('submis1', submis1)
+        print ('submis2', submis2)
+        print ('**Unable to have either command run')
 
 
 
