@@ -324,7 +324,7 @@ if __name__ == "__main__":
     while(1):
         sleepTime = 1
         msg = client_queue()
-        if msg == 'None':
+        if msg == 'NO_DATA':
             log('Got a message of None therefore going to sleep and doing nothing')
             time.sleep( sleepTime )
         else:
