@@ -238,8 +238,10 @@ def insertWCS( fileName, lowarcsec, higharcsec ):
 
     #submis = 'solve-field --overwrite --scale-units arcsecperpix --ra %s --dec %s --radius .25 --no-plots  --config /dap/sex/astrometryGaia.cfg %s'%( ra, dec, filename)
     
-    print ('submis1', submis1)
-    os.system(submis1)
+    #print ('submis1', submis1)
+
+    #os.system(submis1)
+    os.system(submis2)
     
     
     #try:
@@ -318,10 +320,26 @@ def insertWCS( fileName, lowarcsec, higharcsec ):
 
 if __name__ == "__main__":
 
-    #testImage = '/dap_data/DECAM/2022_08_12/1120208/working/1120208_N1.fits'
-    runTestImage = False
+    testImage = '/dap_data/DECAM/2022_08_12/1120208/working/1120208_N1.fits'
+    testFolder = "/dap_data/2023_DZ2/2023_03_20/working/"
+
+    images = glob.glob( "%s/*.fits"%(testFolder) )
+
+    runLocalImage = False
+    runLocalFolder = True
+
+    lowarcsec = 1.00
+    higharcsec = 1.10
+
+    if runLocalFolder == True:
+        for im in images:
+            insertWCS( im, lowarcsec, higharcsec )
+    elif runLocalImage == True:
+            insertWCS( testImage, lowarcsec, higharcsec )
+    stop
 
     while(1):
+        
         sleepTime = 1
         msg = client_queue()
         if msg == 'NO_DATA':
@@ -338,16 +356,21 @@ if __name__ == "__main__":
             #stop
             log('fileName: ' + fileName)
             print ('Got fileName of: ', fileName)
-            #startUp("/dap_data/DECAM/2022_08_12/1120208/working/")
+            
 
             lowarcsec = 0.23
             higharcsec = 0.29
+            #lowarcsec = 1.00
+            #higharcsec = 1.10
 
-            if runTestImage == True:
-                insertWCS( testImage, lowarcsec, higharcsec )
-                #stop
-            else:
-                insertWCS( fileName, lowarcsec, higharcsec )
+            #if runLocalFolder == True:
+            #    for im in images:
+            #        insertWCS( im, lowarcsec, higharcsec )
+            #elif runLocalImage == True:
+            #        insertWCS( testImage, lowarcsec, higharcsec )
+            #    #stop
+            #else:
+            insertWCS( fileName, lowarcsec, higharcsec )
             
             updateDB( msg, msg ) #say the work has been done
             log('updateDB function complete')
