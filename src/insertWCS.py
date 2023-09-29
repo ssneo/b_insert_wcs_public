@@ -13,46 +13,13 @@ import socket
 import psycopg2
 from datetime import datetime
 
+from client_queue import client_queue
+
 try:
     logging.basicConfig( filename = '/container_b_log.log', level=logging.DEBUG)
 except:
     logging.basicConfig( filename = '/Users/linder/container_b_log.log', level=logging.DEBUG)
 
-def client_queue():
-
-    headerSize = 10
-
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    s.connect ( ('192.168.1.21', 62892) )
-    #s.connect ( ('0.0.0.0', 62891) )
-
-    #s.connect ( ( socket.gethostname(), 1234) )
-
-
-    full_msg = ''
-    new_msg = True
-
-    #while True: 
-
-    for i in range(0, 5): #this needs to be turned off for final system
-        msg = s.recv(1024)
-
-        print ('msg that is coming from queue', msg)
-        if new_msg:
-            print (f"new message length {msg[:headerSize] }" )
-            msglen = int(msg[:headerSize] )
-            new_msg = False
-
-        full_msg += msg.decode("utf-8")
-
-        if len(full_msg) - headerSize == msglen:
-            print (full_msg[headerSize:] )
-
-            #new_msg = True
-            #full_msg = ''
-
-            return full_msg[headerSize:]
 
 def readInformationFromDatabase(msg): #confirm the psql line is correct
     #image = "1120208_N1.fits"
@@ -68,20 +35,20 @@ def readInformationFromDatabase(msg): #confirm the psql line is correct
     con=psycopg2.connect(**config)
     cur=con.cursor()
 
-    psql = "SELECT image,file_location FROM dap WHERE id=%s"%( msg )
-    print ('psql line 72', psql)
+    psql = "SELECT folder_loc,image_file_name FROM dap WHERE id=%s"%( msg )
+    #print ('psql line 72', psql)
 
     cur.execute(psql)
     output = cur.fetchall()
-    image = output[0][0]
-    file_location = output[0][1]
+    folder_loc = output[0][0]
+    image_file_name = output[0][1]
     con.close()
     #
 
-    if os.path.basename( file_location  ) == 'working':
-        fileName = os.path.join( file_location, image )
+    if os.path.basename( folder_loc  ) == 'working' or os.path.basename( folder_loc  ) == 'workin':
+        fileName = os.path.join( folder_loc, image_file_name )
     else:
-        fileName = os.path.join( file_location, 'working', image)
+        fileName = os.path.join( folder_loc, 'working', image_file_name)
 
     return fileName
 
@@ -113,13 +80,14 @@ def log(value):
 def insertWCS( fileName, lowarcsec, higharcsec ):
     #fileNameWithoutEnding is the filename without the 4 or 5 digits of FIT, fit, FITS, or fits including the period before
 
-
+    print (fileName)
 
     fileNameWithoutEnding = fileName.replace('.fits', '')
     fileNameWithoutEnding = fileNameWithoutEnding.replace('.fit', '')
+    fileNameWithoutEnding = fileNameWithoutEnding.replace('.FIT', '')
 
 
-    d1=fits.open('%s'%(fileName))
+    d1=fits.open('%s'%(fileName), ignore_missing_end=True)
     d1.close()
     h1=d1[0].header
 
@@ -203,8 +171,13 @@ def insertWCS( fileName, lowarcsec, higharcsec ):
 
 
             except:
-                print ('Cannot locate RA/DEC values in the header')
-                sys.exit()
+                overRide = True
+                if overRide == True: #gives me an option to manually insert and ra/dec value
+                    ra = "17:08:16.5"
+                    dec = "+47:09:36"
+                else:
+                    print ('Cannot locate RA/DEC values in the header')
+                    sys.exit()
 
 
     
@@ -233,6 +206,8 @@ def insertWCS( fileName, lowarcsec, higharcsec ):
 
 
     submis1 = 'solve-field --overwrite --skip-solved --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 30 --no-plots  --config /mnt/raid/k8s_files/sex/astrometryGaia.cfg %s'%(lowarcsec, higharcsec, ra, dec, fileName)
+
+    #submis2 = 'solve-field --overwrite --skip-solved --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 30 --no-plots  --config /dap/b_insert_wcs/sex/astrometry2Mass.cfg %s'%(lowarcsec, higharcsec, ra, dec, fileName)
 
     submis2 = 'solve-field --overwrite --skip-solved --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 30 --no-plots  --config /dap/b_insert_wcs/sex/astrometryGaia.cfg %s'%(lowarcsec, higharcsec, ra, dec, fileName)
 
@@ -317,31 +292,131 @@ def insertWCS( fileName, lowarcsec, higharcsec ):
         newLoc = fileName.replace('working', 'wcs_failed')
         shutil.move(fileName, newLoc)
 
+def find_local_folder_to_process():
+
+    
+    config = {
+        "host": "host.docker.internal",
+        "user": "linder",
+        "password": "flyhigh34",
+        "database": "dap",
+    }
+
+    con=psycopg2.connect(**config)
+    cur=con.cursor()
+
+    psql = "SELECT obsid FROM dap WHERE insert_wcs=False order by id limit 1"
+    
+    cur.execute(psql)
+
+    obsid = cur.fetchall()
+
+    con.close()
+
+    try:
+        obsid = obsid[0][0] #if the response is empty this will error out
+
+    except:
+        obsid = 'None'
+
+    return obsid
+
+
+
+
+
+def update_local_folder_processed(obsid):
+
+    config = {
+        "host": "host.docker.internal",
+        "user": "linder",
+        "password": "flyhigh34",
+        "database": "dap",
+    }
+
+    con=psycopg2.connect(**config)
+    cur=con.cursor()
+
+
+    psql = "UPDATE dap SET insert_wcs=True where id=%s"%(obsid)
+    
+    cur.execute(psql)
+
+    con.commit()
+
+    con.close()
 
 if __name__ == "__main__":
 
     testImage = '/dap_data/DECAM/2022_08_12/1120208/working/1120208_N1.fits'
-    testFolder = "/dap_data/2023_DZ2/2023_03_20/working/"
+    #testFolder = "/dap_data/2023_DZ2/2023_03_20/working/"
+    #testFolder = "/dap_data/DECAM/2022_08_12/1120241/working/"
+    testFolder = "/dap_data/ARI/14/working/"
 
-    images = glob.glob( "%s/*.fits"%(testFolder) )
+    testFolders = "/dap_data/DECAM/orginal_2022_08_12/" #this is the base directory
 
+    runLocalFolders = True #run multiple folders of data
+    runLocalFolder = False
     runLocalImage = False
-    runLocalFolder = True
 
-    lowarcsec = 1.00
-    higharcsec = 1.10
 
-    if runLocalFolder == True:
-        for im in images:
-            insertWCS( im, lowarcsec, higharcsec )
-    elif runLocalImage == True:
-            insertWCS( testImage, lowarcsec, higharcsec )
-    stop
+    #lowarcsec = 1.00
+    #higharcsec = 1.10
+    lowarcsec = 0.2
+    higharcsec = 0.3
+    
+    #if runLocalFolders == True:
+    #    while(1):
+    #        obsid = find_local_folder_to_process()
+
+    #        if obsid != 'None':
+                
+
+    #            folder_loc = os.path.join( testFolders, str(obsid) )
+    #            if folder_loc[-1] != "/":
+    #                folder_loc += "/"
+
+                #print ('folder_loc', folder_loc)
+                #folders = glob.glob('%s*'%(folder_loc) )
+                #print ('len(folders)', len(folders))
+                #for folder in folders:
+
+    #            images = glob.glob( "%s/working/*.fits"%(folder_loc) )
+    #            images += glob.glob( "%s/working/*.FIT"%(folder_loc) )
+    #            images += glob.glob( "%s/working/*.fit"%(folder_loc) )
+                #print ('len(images)', len(images))
+    #            for im in images:
+                    #print (im)
+    #                insertWCS( im, lowarcsec, higharcsec )
+                    #stop
+
+    #            update_local_folder_processed( obsid )
+                #stop
+                
+    #        else:
+    #            print ('Obsid returned none, obsid=%s'%(obsid))
+    #            break
+
+
+    #elif runLocalFolder == True:
+    #    images = glob.glob( "%s/*.fits"%(testFolder) )
+    #    images += glob.glob( "%s/*.FIT"%(testFolder) )
+    #    images += glob.glob( "%s/*.fit"%(testFolder) )
+
+    #    print (images)
+
+    #    for im in images:
+    #        insertWCS( im, lowarcsec, higharcsec )
+
+    #elif runLocalImage == True:
+    #        insertWCS( testImage, lowarcsec, higharcsec )
+    
+    #stop
 
     while(1):
         
         sleepTime = 1
-        msg = client_queue()
+        msg = client_queue('192.168.1.21', 62892)
         if msg == 'NO_DATA':
             log('Got a message of None therefore going to sleep and doing nothing')
             time.sleep( sleepTime )
