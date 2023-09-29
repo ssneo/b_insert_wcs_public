@@ -35,7 +35,7 @@ def readInformationFromDatabase(msg): #confirm the psql line is correct
     con=psycopg2.connect(**config)
     cur=con.cursor()
 
-    psql = "SELECT folder_loc,image_file_name FROM dap WHERE id=%s"%( msg )
+    psql = "SELECT folder_loc, image_file_name FROM dap WHERE id=%s"%( msg )
     #print ('psql line 72', psql)
 
     cur.execute(psql)
@@ -52,7 +52,7 @@ def readInformationFromDatabase(msg): #confirm the psql line is correct
 
     return fileName
 
-def updateDB( msg, id ):
+def updateDB( msg ):
     config = {
         "host": "192.168.1.21",
         "user": "linder",
@@ -63,7 +63,7 @@ def updateDB( msg, id ):
     con=psycopg2.connect(**config)
     cur=con.cursor()
 
-    psql = "UPDATE dap SET insert_wcs_in_progress=false, insert_wcs_complete=true WHERE id=%s "%( id )
+    psql = "UPDATE dap SET insert_wcs_in_progress=false, insert_wcs_complete=true WHERE id=%s "%( msg )
     print ('psql update command is: ', psql )
 
     cur.execute(psql)
@@ -321,10 +321,6 @@ def find_local_folder_to_process():
 
     return obsid
 
-
-
-
-
 def update_local_folder_processed(obsid):
 
     config = {
@@ -412,7 +408,7 @@ if __name__ == "__main__":
     #        insertWCS( testImage, lowarcsec, higharcsec )
     
     #stop
-    
+
 
     while(1):
         
@@ -422,7 +418,7 @@ if __name__ == "__main__":
             log('Got a message of None therefore going to sleep and doing nothing')
             time.sleep( sleepTime )
         else:
-            msg = msg.split('=')[1]
+            #msg = msg.split('=')[1]
             #print ('msg', msg)
             #stop
             log('Got a message: ' + msg)
@@ -448,7 +444,7 @@ if __name__ == "__main__":
             #else:
             insertWCS( fileName, lowarcsec, higharcsec )
             
-            updateDB( msg, msg ) #say the work has been done
+            updateDB( msg ) #say the work has been done
             log('updateDB function complete')
             print ('updateDB is complete for ', msg )
 
