@@ -46,7 +46,7 @@ COPY /src/log.py /dap/b_insert_wcs/src/log.py
 RUN chmod +x /dap/b_insert_wcs/src/insertWCS.py
 RUN chmod +x /dap/b_insert_wcs/src/keepRunning.py
 
-#CMD ["python3.8", "/dap/b_insert_wcs/src/insertWCS.py"]
-CMD ["python3.8", "/dap/b_insert_wcs/src/keepRunning.py"]
+CMD ["python3.8", "/dap/b_insert_wcs/src/insertWCS.py"]
+#CMD ["python3.8", "/dap/b_insert_wcs/src/keepRunning.py"]
 
 
