@@ -216,7 +216,7 @@ def insertWCS( fileName, lowarcsec, higharcsec ):
     #print ('submis1', submis1)
 
     #os.system(submis1)
-    os.system(submis2)
+    os.system(submis1)
     
     
     #try:
