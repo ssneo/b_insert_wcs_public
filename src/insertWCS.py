@@ -63,7 +63,7 @@ def updateDB( msg ):
     con=psycopg2.connect(**config)
     cur=con.cursor()
 
-    psql = "UPDATE dap SET insert_wcs_in_progress=false, insert_wcs_complete=true WHERE id=%s "%( msg )
+    psql = "UPDATE dap SET insert_wcs_in_progress=false, insert_wcs=true WHERE id=%s "%( msg )
     print ('psql update command is: ', psql )
 
     cur.execute(psql)
