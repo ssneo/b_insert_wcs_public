@@ -38,6 +38,8 @@ WORKDIR /dap/b_insert_wcs/src
 
 COPY /src/insertWCS.py /dap/b_insert_wcs/src/insertWCS.py
 COPY /src/keepRunning.py /dap/b_insert_wcs/src/keepRunning.py
+COPY /src/client_queue.py /dap/a_start_up/src/client_queue.py
+COPY /src/log.py /dap/a_start_up/src/log.py
 
 
 #RUN chmod +x /bashFile.sh
