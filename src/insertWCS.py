@@ -412,6 +412,7 @@ if __name__ == "__main__":
     #        insertWCS( testImage, lowarcsec, higharcsec )
     
     #stop
+    
 
     while(1):
         
