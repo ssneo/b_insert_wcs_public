@@ -30,23 +30,23 @@ RUN pip3 install psycopg2-binary
 RUN pip3 install astropy
 
 #we are going to make the dir DAP here then make that the workingDir. This need to occur now because not until after the DockerFile is build are the volumne connected
-RUN mkdir /dap
-RUN mkdir /dap/b_insert_wcs
-RUN mkdir /dap/b_insert_wcs/src
+#RUN mkdir /dap
+#RUN mkdir /dap/b_insert_wcs
+#RUN mkdir /dap/b_insert_wcs/src
 WORKDIR /dap/b_insert_wcs/src 
 
 
-COPY /src/insertWCS.py /dap/b_insert_wcs/src/insertWCS.py
-COPY /src/keepRunning.py /dap/b_insert_wcs/src/keepRunning.py
-COPY /src/client_queue.py /dap/b_insert_wcs/src/client_queue.py
-COPY /src/log.py /dap/b_insert_wcs/src/log.py
+#COPY /src/insertWCS.py /dap/b_insert_wcs/src/insertWCS.py
+#COPY /src/keepRunning.py /dap/b_insert_wcs/src/keepRunning.py
+#COPY /src/client_queue.py /dap/b_insert_wcs/src/client_queue.py
+#COPY /src/log.py /dap/b_insert_wcs/src/log.py
 
 
 #RUN chmod +x /bashFile.sh
-RUN chmod +x /dap/b_insert_wcs/src/insertWCS.py
-RUN chmod +x /dap/b_insert_wcs/src/keepRunning.py
+#RUN chmod +x /dap/b_insert_wcs/src/insertWCS.py
+#RUN chmod +x /dap/b_insert_wcs/src/keepRunning.py
 
-CMD ["python3.8", "/dap/b_insert_wcs/src/insertWCS.py"]
+#CMD ["python3.8", "/dap/b_insert_wcs/src/insertWCS.py"]
 #CMD ["python3.8", "/dap/b_insert_wcs/src/keepRunning.py"]
 
 

@@ -35,7 +35,7 @@ def readInformationFromDatabase(msg): #confirm the psql line is correct
     con=psycopg2.connect(**config)
     cur=con.cursor()
 
-    psql = "SELECT folder_loc, image_file_name FROM dap WHERE id=%s"%( msg )
+    psql = "SELECT file_location, image FROM dap WHERE id=%s"%( msg )
     #print ('psql line 72', psql)
 
     cur.execute(psql)
@@ -63,7 +63,7 @@ def updateDB( msg ):
     con=psycopg2.connect(**config)
     cur=con.cursor()
 
-    psql = "UPDATE dap SET insert_wcs_in_progress=false, insert_wcs=true WHERE id=%s "%( msg )
+    psql = "UPDATE dap SET insert_wcs_in_progress=false, insert_wcs_complete=true WHERE id=%s "%( msg )
     print ('psql update command is: ', psql )
 
     cur.execute(psql)
@@ -77,7 +77,7 @@ def log(value):
     time = '%s-%s-%s %s:%s:%s'%( utcTime.strftime("%Y"), utcTime.strftime("%m"), utcTime.strftime("%d"), utcTime.strftime("%H"), utcTime.strftime("%m"), utcTime.strftime("%S"))
     logging.info("%s: %s"%(time, value))
 
-def insertWCS( fileName, lowarcsec, higharcsec ):
+def insertWCS( fileName=None, lowarcsec=None, higharcsec=None, location_of_index_files=None ):
     #fileNameWithoutEnding is the filename without the 4 or 5 digits of FIT, fit, FITS, or fits including the period before
 
     print (fileName)
@@ -205,18 +205,20 @@ def insertWCS( fileName, lowarcsec, higharcsec ):
 
 
 
-    submis1 = 'solve-field --overwrite --skip-solved --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 30 --no-plots  --config /mnt/raid/k8s_files/sex/astrometryGaia.cfg %s'%(lowarcsec, higharcsec, ra, dec, fileName)
+    submis1 = 'solve-field --overwrite --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 30 --no-plots  --config %s %s'%(lowarcsec, higharcsec, ra, dec, location_of_index_files, fileName)
 
     #submis2 = 'solve-field --overwrite --skip-solved --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 30 --no-plots  --config /dap/b_insert_wcs/sex/astrometry2Mass.cfg %s'%(lowarcsec, higharcsec, ra, dec, fileName)
 
-    submis2 = 'solve-field --overwrite --skip-solved --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 30 --no-plots  --config /dap/b_insert_wcs/sex/astrometryGaia.cfg %s'%(lowarcsec, higharcsec, ra, dec, fileName)
+    #submis2 = 'solve-field --overwrite --skip-solved --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 30 --no-plots  --config /dap/b_insert_wcs/sex/astrometryGaia.cfg %s'%(lowarcsec, higharcsec, ra, dec, fileName)
 
     #submis = 'solve-field --overwrite --scale-units arcsecperpix --ra %s --dec %s --radius .25 --no-plots  --config /dap/sex/astrometryGaia.cfg %s'%( ra, dec, filename)
     
-    #print ('submis1', submis1)
-
-    #os.system(submis1)
+    print ('submis1', submis1)
     os.system(submis1)
+    #if runLocalFolder == True:
+    #    os.system(submis2)
+    #else:
+    #    os.system(submis1)
     
     
     #try:
@@ -289,8 +291,19 @@ def insertWCS( fileName, lowarcsec, higharcsec ):
         wcsRA = (wcsRA_DEC.ra * u.degree).value
         wcsDEC = (wcsRA_DEC.dec * u.degree).value
     except:
-        newLoc = fileName.replace('working', 'wcs_failed')
+        par_name = os.path.dirname( fileName )
+        base_name = os.path.basename( fileName )
+        par_name = par_name.replace( 'working', 'misc')
+
+        newLoc = os.path.join( par_name, 'wcs_failed', base_name)
+
         shutil.move(fileName, newLoc)
+
+        print ('')
+        print ('')
+        print(f'PLATE-SOLVE FAILED {fileName}')
+        print ('')
+        print ('')
 
 def find_local_folder_to_process():
 
@@ -344,14 +357,19 @@ def update_local_folder_processed(obsid):
 
 if __name__ == "__main__":
 
-    testImage = '/dap_data/DECAM/2022_08_12/1120208/working/1120208_N1.fits'
+    #testImage = '/dap_data/DECAM/2022_08_12/1120208/working/1120208_N1.fits'
+    testImage = '/mnt/truenas/linder/decam//2022_08_12/1120208/working/1120208_N1.fits'
     #testFolder = "/dap_data/2023_DZ2/2023_03_20/working/"
     #testFolder = "/dap_data/DECAM/2022_08_12/1120241/working/"
-    testFolder = "/dap_data/ARI/14/working/"
+    #testFolder = "/dap_data/ARI/14/working/"
 
-    testFolders = "/dap_data/DECAM/orginal_2022_08_12/" #this is the base directory
+    #testFolder = "/dap_data/Apophis_Data/2020_12_18/working"
+    #testFolder = "/dap_data/Apophis_Data/2021_03_06_CTIO/working"
+    testFolder = "/dap_data/Apophis_Data/2021_03_06_UoA/working"
 
-    runLocalFolders = True #run multiple folders of data
+    #testFolders = "/dap_data/Apophis_Data/2020_12_18/working" #this is the base directory
+
+    runLocalFolders = False #run multiple folders of data
     runLocalFolder = False
     runLocalImage = False
 
@@ -394,18 +412,21 @@ if __name__ == "__main__":
     #            break
 
 
-    #elif runLocalFolder == True:
+    #if runLocalFolder == True:
     #    images = glob.glob( "%s/*.fits"%(testFolder) )
     #    images += glob.glob( "%s/*.FIT"%(testFolder) )
     #    images += glob.glob( "%s/*.fit"%(testFolder) )
 
-    #    print (images)
+        #print (images)
 
     #    for im in images:
-    #        insertWCS( im, lowarcsec, higharcsec )
+    #        print (im)
+    #        insertWCS( im, lowarcsec, higharcsec, runLocalFolder )
 
-    #elif runLocalImage == True:
-    #        insertWCS( testImage, lowarcsec, higharcsec )
+    if runLocalImage == True:
+            #insertWCS( testImage, lowarcsec, higharcsec, runLocalFolder )
+            location_of_index_files = '/dap/b_insert_wcs/sex/astrometryGaia.cfg'
+            insertWCS( fileName=testImage, lowarcsec=lowarcsec, higharcsec=higharcsec, location_of_index_files=location_of_index_files )
     
     #stop
 
@@ -442,7 +463,9 @@ if __name__ == "__main__":
             #        insertWCS( testImage, lowarcsec, higharcsec )
             #    #stop
             #else:
-            insertWCS( fileName, lowarcsec, higharcsec )
+
+            location_of_index_files = '/mnt/raid/k8s_files/sex/astrometryGaia.cfg'
+            insertWCS( fileName=fileName, lowarcsec=lowarcsec, higharcsec=higharcsec, runLocalFolder=runLocalFolder, location_of_index_files=location_of_index_files )
             
             updateDB( msg ) #say the work has been done
             log('updateDB function complete')
