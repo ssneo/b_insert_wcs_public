@@ -10,7 +10,7 @@ from astropy import units as u
 import logging
 import time
 import socket
-import psycopg2
+#import psycopg2
 from datetime import datetime
 
 from client_queue import client_queue
