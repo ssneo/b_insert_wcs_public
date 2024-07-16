@@ -173,8 +173,10 @@ def insertWCS( fileName=None, lowarcsec=None, higharcsec=None, location_of_index
             except:
                 overRide = True
                 if overRide == True: #gives me an option to manually insert and ra/dec value
-                    ra = "17:08:16.5"
-                    dec = "+47:09:36"
+                    #ra = "20:50:51"
+                    #dec = "+48:27:44"
+                    ra = None
+                    dec = None
                 else:
                     print ('Cannot locate RA/DEC values in the header')
                     sys.exit()
@@ -204,8 +206,13 @@ def insertWCS( fileName=None, lowarcsec=None, higharcsec=None, location_of_index
     #submis = 'solve-field  --scale-units arcsecperpix --scale-low %s --scale-high %s --cpulimit 5 --no-plots  --skip-solved %s'%(lowarcsec, higharcsec, filename)
 
 
+    if ra != None:
+        submis1 = 'solve-field --overwrite --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 300 -d 100 --sigma 100 --no-plots  --config %s %s'%(lowarcsec, higharcsec, ra, dec, location_of_index_files, fileName)
+        #-d 20 means only look at the brightest 20 stars
+        #submis1 = 'solve-field --overwrite --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --cpulimit 300 -d 20 --no-plots  --config %s %s'%(lowarcsec, higharcsec, ra, dec, location_of_index_files, fileName)
 
-    submis1 = 'solve-field --overwrite --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 30 --no-plots  --config %s %s'%(lowarcsec, higharcsec, ra, dec, location_of_index_files, fileName)
+    else:
+        submis1 = 'solve-field --overwrite --scale-units arcsecperpix --scale-low %s --scale-high %s --cpulimit 300 --no-plots  -d 100 --sigma 100 --config %s %s'%(lowarcsec, higharcsec, location_of_index_files, fileName)
 
     #submis2 = 'solve-field --overwrite --skip-solved --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 30 --no-plots  --config /dap/b_insert_wcs/sex/astrometry2Mass.cfg %s'%(lowarcsec, higharcsec, ra, dec, fileName)
 
@@ -297,7 +304,11 @@ def insertWCS( fileName=None, lowarcsec=None, higharcsec=None, location_of_index
 
         newLoc = os.path.join( par_name, 'wcs_failed', base_name)
 
-        shutil.move(fileName, newLoc)
+        #wcs_failed_path = os.path.join( par_name, 'wcs_failed')
+        #if os.path.exists( wcs_failed_path ) == False:
+        #    os.mkdir( wcs_failed_path )
+
+        #shutil.move(fileName, newLoc)
 
         print ('')
         print ('')
