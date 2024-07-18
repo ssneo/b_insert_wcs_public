@@ -173,8 +173,8 @@ def insertWCS( fileName=None, lowarcsec=None, higharcsec=None, location_of_index
             except:
                 overRide = True
                 if overRide == True: #gives me an option to manually insert and ra/dec value
-                    #ra = "20:50:51"
-                    #dec = "+48:27:44"
+                    #ra = "16:50:18.8"
+                    #dec = "+12:01:32"
                     ra = None
                     dec = None
                 else:
@@ -207,12 +207,15 @@ def insertWCS( fileName=None, lowarcsec=None, higharcsec=None, location_of_index
 
 
     if ra != None:
-        submis1 = 'solve-field --overwrite --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 300 -d 100 --sigma 100 --no-plots  --config %s %s'%(lowarcsec, higharcsec, ra, dec, location_of_index_files, fileName)
+        #submis1 = 'solve-field --overwrite --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 300 -d 100 --sigma 100 --no-plots  --config %s %s'%(lowarcsec, higharcsec, ra, dec, location_of_index_files, fileName)
+        submis1 = 'solve-field --overwrite --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 300 -d 100 --no-plots  --config %s %s'%(lowarcsec, higharcsec, ra, dec, location_of_index_files, fileName)
+        #submis1 = 'solve-field --overwrite  --ra %s --dec %s --radius 3 --cpulimit 300 -d 100 --no-plots  --config %s %s'%( ra, dec, location_of_index_files, fileName)
         #-d 20 means only look at the brightest 20 stars
         #submis1 = 'solve-field --overwrite --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --cpulimit 300 -d 20 --no-plots  --config %s %s'%(lowarcsec, higharcsec, ra, dec, location_of_index_files, fileName)
 
     else:
-        submis1 = 'solve-field --overwrite --scale-units arcsecperpix --scale-low %s --scale-high %s --cpulimit 300 --no-plots  -d 100 --sigma 100 --config %s %s'%(lowarcsec, higharcsec, location_of_index_files, fileName)
+        #submis1 = 'solve-field --overwrite --scale-units arcsecperpix --scale-low %s --scale-high %s --cpulimit 300 --no-plots  -d 100 --sigma 100 --config %s %s'%(lowarcsec, higharcsec, location_of_index_files, fileName)
+        submis1 = 'solve-field --overwrite --scale-units arcsecperpix --scale-low %s --scale-high %s --cpulimit 300 --no-plots  -d 100 --config %s %s'%(lowarcsec, higharcsec, location_of_index_files, fileName)
 
     #submis2 = 'solve-field --overwrite --skip-solved --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 30 --no-plots  --config /dap/b_insert_wcs/sex/astrometry2Mass.cfg %s'%(lowarcsec, higharcsec, ra, dec, fileName)
 
@@ -304,11 +307,11 @@ def insertWCS( fileName=None, lowarcsec=None, higharcsec=None, location_of_index
 
         newLoc = os.path.join( par_name, 'wcs_failed', base_name)
 
-        #wcs_failed_path = os.path.join( par_name, 'wcs_failed')
-        #if os.path.exists( wcs_failed_path ) == False:
-        #    os.mkdir( wcs_failed_path )
+        wcs_failed_path = os.path.join( par_name, 'wcs_failed')
+        if os.path.exists( wcs_failed_path ) == False:
+            os.mkdir( wcs_failed_path )
 
-        #shutil.move(fileName, newLoc)
+        shutil.move(fileName, newLoc)
 
         print ('')
         print ('')
@@ -376,19 +379,21 @@ if __name__ == "__main__":
 
     #testFolder = "/dap_data/Apophis_Data/2020_12_18/working"
     #testFolder = "/dap_data/Apophis_Data/2021_03_06_CTIO/working"
-    testFolder = "/dap_data/Apophis_Data/2021_03_06_UoA/working"
+    #testFolder = "/dap_data/Apophis_Data/2021_03_06_UoA/working"
+
+    testFolder = "/dap_data/SA107/working"
 
     #testFolders = "/dap_data/Apophis_Data/2020_12_18/working" #this is the base directory
 
     runLocalFolders = False #run multiple folders of data
-    runLocalFolder = False
+    runLocalFolder = True
     runLocalImage = False
 
 
     #lowarcsec = 1.00
     #higharcsec = 1.10
-    lowarcsec = 0.2
-    higharcsec = 0.3
+    lowarcsec = 0.7
+    higharcsec = 0.8
     
     #if runLocalFolders == True:
     #    while(1):
@@ -423,23 +428,23 @@ if __name__ == "__main__":
     #            break
 
 
-    #if runLocalFolder == True:
-    #    images = glob.glob( "%s/*.fits"%(testFolder) )
-    #    images += glob.glob( "%s/*.FIT"%(testFolder) )
-    #    images += glob.glob( "%s/*.fit"%(testFolder) )
+    if runLocalFolder == True:
+        images = glob.glob( "%s/*.fits"%(testFolder) )
+        images += glob.glob( "%s/*.FIT"%(testFolder) )
+        images += glob.glob( "%s/*.fit"%(testFolder) )
 
         #print (images)
 
-    #    for im in images:
-    #        print (im)
-    #        insertWCS( im, lowarcsec, higharcsec, runLocalFolder )
+        for im in images:
+            print (im)
+            insertWCS( im, lowarcsec, higharcsec, runLocalFolder )
 
     if runLocalImage == True:
             #insertWCS( testImage, lowarcsec, higharcsec, runLocalFolder )
             location_of_index_files = '/dap/b_insert_wcs/sex/astrometryGaia.cfg'
             insertWCS( fileName=testImage, lowarcsec=lowarcsec, higharcsec=higharcsec, location_of_index_files=location_of_index_files )
     
-    #stop
+    stop
 
 
     while(1):
