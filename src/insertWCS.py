@@ -7,7 +7,7 @@ import shutil
 import sys
 from astropy.wcs import WCS
 from astropy import units as u
-import logging
+#import logging
 import time
 import socket
 #import psycopg2
