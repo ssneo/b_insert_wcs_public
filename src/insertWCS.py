@@ -15,10 +15,10 @@ from datetime import datetime
 
 from client_queue import client_queue
 
-try:
-    logging.basicConfig( filename = '/container_b_log.log', level=logging.DEBUG)
-except:
-    logging.basicConfig( filename = '/Users/linder/container_b_log.log', level=logging.DEBUG)
+#try:
+#    logging.basicConfig( filename = '/container_b_log.log', level=logging.DEBUG)
+#except:
+#    logging.basicConfig( filename = '/Users/linder/container_b_log.log', level=logging.DEBUG)
 
 
 def readInformationFromDatabase(msg): #confirm the psql line is correct
