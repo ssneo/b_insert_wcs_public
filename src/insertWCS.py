@@ -215,7 +215,9 @@ def insertWCS( fileName=None, lowarcsec=None, higharcsec=None, location_of_index
 
     else:
         #submis1 = 'solve-field --overwrite --scale-units arcsecperpix --scale-low %s --scale-high %s --cpulimit 300 --no-plots  -d 100 --sigma 100 --config %s %s'%(lowarcsec, higharcsec, location_of_index_files, fileName)
-        submis1 = 'solve-field --overwrite --scale-units arcsecperpix --scale-low %s --scale-high %s --cpulimit 300 --no-plots  -d 100 --config %s %s'%(lowarcsec, higharcsec, location_of_index_files, fileName)
+        
+        #submis1 = 'solve-field --overwrite --scale-units arcsecperpix --scale-low %s --scale-high %s --cpulimit 300 --no-plots  -d 100 --config %s %s'%(lowarcsec, higharcsec, location_of_index_files, fileName)
+        submis1 = 'solve-field --overwrite --scale-units arcsecperpix --scale-low %s --scale-high %s --cpulimit 300 --no-plots --config %s %s'%(lowarcsec, higharcsec, location_of_index_files, fileName)
 
     #submis2 = 'solve-field --overwrite --skip-solved --scale-units arcsecperpix --scale-low %s --scale-high %s --ra %s --dec %s --radius 3 --cpulimit 30 --no-plots  --config /dap/b_insert_wcs/sex/astrometry2Mass.cfg %s'%(lowarcsec, higharcsec, ra, dec, fileName)
 
