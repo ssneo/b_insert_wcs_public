@@ -13,7 +13,7 @@ import socket
 #import psycopg2
 from datetime import datetime
 
-from client_queue import client_queue
+#from client_queue import client_queue
 
 #try:
 #    logging.basicConfig( filename = '/container_b_log.log', level=logging.DEBUG)
