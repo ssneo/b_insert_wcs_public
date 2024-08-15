@@ -8,7 +8,7 @@ def main( image ):
     #insertWCS( fileName=image, lowarcsec=0.55, higharcsec=0.65, location_of_index_files='/dap/b_insert_wcs/cfg/astrometryGaia_dr2.cfg')
     #insertWCS( fileName=image, lowarcsec=1.15, higharcsec=1.25, location_of_index_files='/dap/b_insert_wcs/cfg/astrometryGaia_dr2.cfg')
     #insertWCS( fileName=image, lowarcsec=1.15, higharcsec=1.25, location_of_index_files='/dap/b_insert_wcs/cfg/astrometry2Mass.cfg')
-    #insertWCS( fileName=image, lowarcsec=2.00, higharcsec=4.00, location_of_index_files='/dap/b_insert_wcs/cfg/astrometry2Mass.cfg')
+    #insertWCS( fileName=image, lowarcsec=0.50, higharcsec=2.00, location_of_index_files='/dap/b_insert_wcs/cfg/astrometry2Mass.cfg')
     insertWCS( fileName=image, lowarcsec=0.55, higharcsec=0.65, location_of_index_files='/dap/b_insert_wcs/cfg/astrometryGaia_dr2.cfg')
     #insertWCS( fileName=image, lowarcsec=0.55, higharcsec=0.65, location_of_index_files='/dap/b_insert_wcs/cfg/astrometryGaia_dr2_small_field.cfg')
 
@@ -26,20 +26,21 @@ if __name__ == '__main__':
 
     #image = '/dap_data/SA107/working/SA107_2024-04-17_clear_-10_4x4x60s_0000.fit'
     #image = '/dap_data/7_11_Calibration/2012FN62_07_11-001_30s_light_V_c.fits'
-    image = '/dap_data/7_11_Calibration/39796_07_11-001_60s_light_V_c.fits'
+    #image = '/dap_data/7_11_Calibration/39796_07_11-001_60s_light_V_c.fits'
     #image = '/dap_data/7_11_Calibration/2012FN62_07_11-001_30s_light_V_c.fits'
     #image = '/dap_data/7_11_Calibration/415029_07_11-001_30s_light_V_c.fits'
     #image = '/dap_data/7_11_Calibration/481032_07_11-001_60s_light_V_c.fits'
 
     #image = '/dap_data/V518Cyg_07_13-007_60s_light_B.fit'
-    #image = '/dap_data/V518Cyg_07_13-007_60s_light_B.fit'
+    #image = '/dap_data/YK-10-10B-1280-Epson10000-1600-inner.fits'
 
-    image_folder = '/dap_data/michelle_asteroids/2024-07-17/415029/'
+    image_folder = '/dap_data/michelle_asteroids/2024-07-11/415029/'
 
     images = glob.glob( image_folder + "*c.fits")
     
     for im in images:
-        #print (im)
+        print (im)
         #stop
 
         main( im )
+    #main( image )
